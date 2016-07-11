@@ -1,0 +1,7 @@
+{
+  "name": "hierarchicaldaoui",
+  "version": "1.0.0",
+  "description": "Managing the HierarchicalDAO",
+  "main": "app.js",
+  "author": "slothbag"
+}

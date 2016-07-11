@@ -1,0 +1,29 @@
+.chartx { margin: 5px; margin: 5px auto; }
+/*.node { color: #9CB5ED; border: 2px solid #C8C8C8; border-radius: 3px; }
+.node p { font-size: 20px; line-height: 20px; height: 20px; font-weight: bold; padding: 3px; margin: 0; }
+*/
+.nodeExample1 {
+    padding: 2px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background-color: #ffffff;
+    border: 1px solid #000;
+    wixdth: 200px;
+    font-family: Tahoma;
+    font-size: 12px;
+}
+
+.nodeExample1 img {
+    height:32px;
+    width:32px;
+    position:absolute;
+}
+
+.nodeExample1 p.node-name {
+    margin-top:40px;
+}
+
+.node-name {
+    font-weight:bold;
+}

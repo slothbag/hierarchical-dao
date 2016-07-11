@@ -1,0 +1,47 @@
+{
+  "author": "slothbag",
+  "bugs": {},
+  "gxDependencies": [
+    {
+      "author": "slothbag",
+      "hash": "QmVywu5eiwcLrmEYoKBUsJiYXVfLjUidZmeHS5MxyDtmr5",
+      "name": "photon",
+      "version": "0.1.2-alpha"
+    },
+    {
+      "author": "slothbag",
+      "hash": "QmbqNPsyWN5uKmqjj6sv5sqvfyNuJaRFsA6mjzg54XAEWo",
+      "name": "web3",
+      "version": "0.15.3"
+    },
+    {
+      "author": "slothbag",
+      "hash": "QmQhhKYqNwipMSpwz5G2fY3dX2xm1H6pujeLWKS7PK1fRP",
+      "name": "mithriljs",
+      "version": "0.2.5"
+    },
+    {
+      "author": "slothbag",
+      "hash": "QmdVSi27zJ8dLs6Yf272cYJxKvmk3vBwqWGrMqiXEgaGL1",
+      "name": "jQuery",
+      "version": "2.2.1"
+    },
+    {
+      "author": "slothbag",
+      "hash": "QmYYsAbhScjkHz8v6PteEZRY9NmW173zvgM6kxa6U7XBp9",
+      "name": "treant-js",
+      "version": "git-e1a4ea3"
+    },
+    {
+      "author": "slothbag",
+      "hash": "Qmdr95n4J6tMz5T1pzPCGVngetzqtS2tfEuxasYLMW9Upx",
+      "name": "jquery-dropdown",
+      "version": "0.0.0"
+    }
+  ],
+  "gxVersion": "0.7.0",
+  "language": "javascript",
+  "license": "",
+  "name": "HierarchicalDAO",
+  "version": "1.0.1"
+}
