@@ -29,7 +29,7 @@ app.on('ready', function() {
     minHeight: 200,
     acceptFirstMouse: true,
     //titleBarStyle: 'hidden',
-    icon: require('path').join(__dirname, 'img/Home-icon-48.png')
+    icon: require('path').join(__dirname, 'img/network.png')
   });
 
   //mainWindow.toggleDevTools();

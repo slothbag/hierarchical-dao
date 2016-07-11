@@ -74,7 +74,7 @@ TreePage.fetchHierarchy = function(target_dao_address) {
     //fetch daos & members both upstream and downstream from us
     var structure = {}
     structure.text = {name: target_dao_address}
-    structure.image = "img/org.png";
+    structure.image = "img/network.png";
     structure.stackChildren = true;
 
     //check each member
