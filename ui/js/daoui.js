@@ -13,6 +13,7 @@ $(function() {
     ethrpc = localStorage.getItem("ethrpc");
     daoname = localStorage.getItem("daoname");
     daoaddress = localStorage.getItem("daoaddress");
+    if (daoaddress == null) daoaddress = "";
 
     var txs = JSON.parse(localStorage.getItem('txs'));
     if (txs != null)

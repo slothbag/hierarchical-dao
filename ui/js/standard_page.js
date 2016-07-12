@@ -12,7 +12,7 @@ var StandardPage = function(page) {
 
         if (rpcAvailable) {
             block = web3.eth.getBlock("latest");
-            if (daoaddress != null && daoaddress.length > 0)
+            if (daoaddress.length > 0)
                 ethCache.balance = web3.fromWei(web3.eth.getBalance(daoaddress), "ether").toNumber();
         }
 
