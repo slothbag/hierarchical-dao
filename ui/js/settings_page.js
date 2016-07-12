@@ -4,7 +4,9 @@ SettingsPage.route = "/settings";
 
 SettingsPage.controller = function() {
 
-    this.accounts = web3.eth.accounts;
+    this.accounts = []
+    if (rpcAvailable)
+        this.accounts = web3.eth.accounts;
 
     this.save = function() {
         ethrpc = $('#ethrpc').val();
