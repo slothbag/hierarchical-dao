@@ -9,7 +9,7 @@ DeployDAOPage.controller = function() {
         var gasPrice = web3.eth.gasPrice.toNumber();
         var contract = web3.eth.contract(HierarchicalDAO_abi);
 
-        $('#new_dao_address').html("waiting...");
+        $('#notice').html("waiting...");
         contract.new({from: account, gas:3100000, gasPrice: gasPrice, data: HierarchicalDAO_bin}, function(err, myContract) {
             if (err) {
                 alert(err);
@@ -23,6 +23,7 @@ DeployDAOPage.controller = function() {
 
             if (myContract.address != null) {
                 $('#new_dao_address').html(myContract.address);
+                $('#notice').html("Please copy and/or write down this DAO address. Once you leave this screen it is lost.");
             }
 		
 	    });	
@@ -33,7 +34,8 @@ DeployDAOPage.view = function(ctrl) {
     return m("div", {style:"margin:10px;"},
         m("h3", {style:"margin-top:0px;"},"Deploy DAO"),
         m("button.btn.btn-large.btn-primary", {onclick:ctrl.deployClick}, "Click to deploy new DAO"),
-        m("div",{id:"new_dao_tx"}),
-        m("div",{id:"new_dao_address"})
+        m("div",{id:"new_dao_tx",style:"-webkit-user-select: text;cursor:auto;"}),
+        m("div",{id:"notice", style:"margin-top:10px;"}),
+        m("div",{id:"new_dao_address",style:"-webkit-user-select: text;cursor:auto;"})
     )
 }

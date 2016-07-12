@@ -96,7 +96,7 @@ ProposalsPage.view = function(ctrl) {
                ctrl.data.map(function(prop, idx){
                 return m("tr",
                   m("td",
-                    ProposalsPage.propTypes[prop.type],
+                    ProposalsPage.propTypes[prop.type].name,
                     m("a", {href:"javascript:void(0);", "data-jq-dropdown":"#jq-dropdown-1", id:"test" + idx, onclick:ctrl.ddClick.bind(null, idx)}, 
                         m("span.icon.icon-down-open", {style:"margin-left:10px;"})
                     )
@@ -115,17 +115,64 @@ ProposalsPage.view = function(ctrl) {
 
 ProposalsPage.propTypes = [
     "",
-    "ChangeAutoApprovalDuration",
-    "ChangeMinAppovalQuorum",
-    "ChangeMinVetoQuorum",
+    {
+        name:"ChangeAutoApprovalDuration", 
+        params:[
+            {name:"Member Index (e.g. 1 for first member)", type:"_uint1"}, 
+            {name:"New Time in Seconds (e.g. 604800 = 1 week)", type:"_uint2"}, 
+            {name:"DAO Overide (if set, adjusts the auto approve for the DAO as a whole and ignores the member index field)", type:"_bool1"}
+        ]
+    },
+    {name:"ChangeMinAppovalQuorum",
+        params:[
+            {name:"Member Index (e.g. 1 for first member)", type:"_uint1"}, 
+            {name:"New Quorum (e.g. 0 for all, or 1 for one member etc)", type:"_uint2"} 
+        ]
+    },
+    {name:"ChangeMinVetoQuorum",
+        params:[
+            {name:"Member Index (e.g. 1 for first member)", type:"_uint1"}, 
+            {name:"New Quorum (e.g. 0 for all, or 1 for one member etc)", type:"_uint2"} 
+        ]
+    },
     "",
-    "ChangeMemberStatus",
-    "ModifyCompulsoryApprover",
-    "JoinParentDAO",
-    "Vote",
-    "AddMember",
-    "TransferEth",
-    "TransferToken"
+    {name:"ChangeMemberStatus",
+        params:[
+            {name:"Member Index (e.g. 1 for first member)", type:"_uint1"}, 
+            {name:"Active (e.g. unchecked for disabled, checked for active)", type:"_bool1"} 
+        ]
+    },
+    {name:"ModifyCompulsoryApprover",
+        params:[
+            {name:"Member Index (e.g. 1 for first member)", type:"_uint1"}, 
+            {name:"Approver Index (e.g. 2 for second member)", type:"_uint2"},
+            {name:"Remove or Add (e.g. unchecked to remove, checked to add)", type:"_bool1"} 
+        ]
+    },
+    {name:"JoinParentDAO",
+        params:[
+            {name:"Parent DAO Address (e.g. 0x12345...)", type:"_address1"} 
+        ]
+    },
+    {name:"Vote",
+        params:[
+            {name:"Proposal Index (e.g. 0 for first proposal)", type:"_uint1"}, 
+            {name:"Veto or Approve (e.g. unchecked for Veto, checked for Approve)", type:"_bool1"} 
+        ]
+    },
+    {name:"AddMember",
+        params:[
+            {name:"Member Address (e.g. 0x12345.... of new member or DAO to add)", type:"_address1"}, 
+            {name:"Active (e.g. unchecked for disabled, checked for active)", type:"_bool1"} 
+        ]
+    },
+    {name:"TransferEth",
+        params:[
+            {name:"Recipient Address (e.g. 0x12345....)", type:"_address1"}, 
+            {name:"Amount (e.g. amount in Wei 18 zeros = 1 ETH)", type:"_uint1", size:"400px"} 
+        ]
+    },
+    {name:"TransferToken"}
 ]
 
 ProposalsPage.approvalTypes = [
