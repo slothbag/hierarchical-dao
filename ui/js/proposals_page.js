@@ -44,7 +44,20 @@ ProposalsPage.controller = function() {
     }
 
     this.viewDetails = function() {
-        alert("View proposal: " + self.selectedProposal);
+        //alert("View proposal: " + self.selectedProposal);
+        console.log(web3.toDecimal(web3.eth.getStorageAt(daoaddress, bn.plus(proposalStartPos))));
+        console.log(web3.eth.getStorageAt(daoaddress, bn.plus(proposalStartPos + 1)));
+        console.log(web3.eth.getStorageAt(daoaddress, bn.plus(proposalStartPos + 2)));
+        console.log(web3.toDecimal(web3.eth.getStorageAt(daoaddress, bn.plus(proposalStartPos + 3))));
+        console.log(web3.toDecimal(web3.eth.getStorageAt(daoaddress, bn.plus(proposalStartPos + 4))));
+        console.log(web3.toDecimal(web3.eth.getStorageAt(daoaddress, bn.plus(proposalStartPos + 5))));
+        console.log(web3.toDecimal(web3.eth.getStorageAt(daoaddress, bn.plus(proposalStartPos + 6))));
+        console.log(web3.toDecimal(web3.eth.getStorageAt(daoaddress, bn.plus(proposalStartPos + 7))));
+        console.log(web3.toDecimal(web3.eth.getStorageAt(daoaddress, bn.plus(proposalStartPos + 8))) == 0 ? "Closed" : "Open");
+        console.log(web3.toDecimal(web3.eth.getStorageAt(daoaddress, bn.plus(proposalStartPos + 9))));
+        console.log(web3.toDecimal(web3.eth.getStorageAt(daoaddress, bn.plus(proposalStartPos + 10))));
+        console.log(web3.toDecimal(web3.eth.getStorageAt(daoaddress, bn.plus(proposalStartPos + 11))));
+        console.log(web3.toDecimal(web3.eth.getStorageAt(daoaddress, bn.plus(proposalStartPos + 12))));
     }
 
     this.executeProposal = function() {
@@ -151,7 +164,7 @@ ProposalsPage.propTypes = [
     },
     {name:"JoinParentDAO",
         params:[
-            {name:"Parent DAO Address (e.g. 0x12345...)", type:"_address1"} 
+            {name:"Parent DAO Address (e.g. 0x12345...)", type:"_address2"} 
         ]
     },
     {name:"Vote",
@@ -162,13 +175,13 @@ ProposalsPage.propTypes = [
     },
     {name:"AddMember",
         params:[
-            {name:"Member Address (e.g. 0x12345.... of new member or DAO to add)", type:"_address1"}, 
+            {name:"Member Address (e.g. 0x12345.... of new member or DAO to add)", type:"_address2"}, 
             {name:"Active (e.g. unchecked for disabled, checked for active)", type:"_bool1"} 
         ]
     },
     {name:"TransferEth",
         params:[
-            {name:"Recipient Address (e.g. 0x12345....)", type:"_address1"}, 
+            {name:"Recipient Address (e.g. 0x12345....)", type:"_address2"}, 
             {name:"Amount (e.g. amount in Wei 18 zeros = 1 ETH)", type:"_uint1", size:"400px"} 
         ]
     },
