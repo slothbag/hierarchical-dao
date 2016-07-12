@@ -55,11 +55,13 @@ function getParentDAOs() {
     var parentDAOs = []
     var targetdao = daoaddress;
     while (true) {
-        var parentDAO = web3.toAscii(web3.eth.getStorageAt(targetdao, 1));
-        if (parentDAO == null && parentDAO != "")
-            parentDAOs.push(parentDAO);
-        else
+        var parentDAO = web3.toHex(web3.toBigNumber(web3.eth.getStorageAt(targetdao, 0)));
+        if (parentDAO == null || parentDAO == "" || parentDAO == "0x0") 
             break;
+        else {
+            parentDAOs.push(parentDAO);
+            targetdao = parentDAO;
+        }
     }
     return parentDAOs;
 }
