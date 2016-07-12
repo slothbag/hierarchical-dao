@@ -43,3 +43,23 @@ function calcDuration(seconds) {
 
     return val + " " + text;
 }
+
+function getPrimaryAccount() {
+    if (primaryaccount == null || primaryaccount == "")
+        return web3.eth.accounts[0];
+    else
+        return primaryaccount;
+}
+
+function getParentDAOs() {
+    var parentDAOs = []
+    var targetdao = daoaddress;
+    while (true) {
+        var parentDAO = web3.toAscii(web3.eth.getStorageAt(targetdao, 1));
+        if (parentDAO == null && parentDAO != "")
+            parentDAOs.push(parentDAO);
+        else
+            break;
+    }
+    return parentDAOs;
+}

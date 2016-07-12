@@ -48,7 +48,7 @@ ProposalsPage.controller = function() {
     }
 
     this.executeProposal = function() {
-        var account = web3.eth.accounts[0];
+        var account = getPrimaryAccount();
         var gasPrice = web3.eth.gasPrice.toNumber();
         var contract = web3.eth.contract(HierarchicalDAO_abi);
         var instance = contract.at(daoaddress);
@@ -63,7 +63,7 @@ ProposalsPage.controller = function() {
     }
 
     this.voteOnProposal = function(vote) {
-        var account = web3.eth.accounts[0];
+        var account = getPrimaryAccount();
         var gasPrice = web3.eth.gasPrice.toNumber();
         var contract = web3.eth.contract(HierarchicalDAO_abi);
         var instance = contract.at(daoaddress);

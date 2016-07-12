@@ -5,7 +5,7 @@ DeployDAOPage.route = "/deploy";
 DeployDAOPage.controller = function() {
     this.deployClick = function() {
 
-        var account = web3.eth.accounts[0];
+        var account = getPrimaryAccount();
         var gasPrice = web3.eth.gasPrice.toNumber();
         var contract = web3.eth.contract(HierarchicalDAO_abi);
 

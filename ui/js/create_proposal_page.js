@@ -3,7 +3,9 @@ var CreateProposalPage = {}
 CreateProposalPage.route = "/proposals";
 
 CreateProposalPage.controller = function() {
-    this.accounts = web3.eth.accounts;
+
+    //get active parent dao addresses
+    this.parentDAOs = getParentDAOs();
 
     this.submit = function() {
         if (rpcAvailable == false || daoaddress.length == 0) {
@@ -14,7 +16,7 @@ CreateProposalPage.controller = function() {
         var gasPrice = web3.eth.gasPrice.toNumber();
 
         //get account
-        var account = $('#account option:selected').text();
+        var account = getPrimaryAccount();
         //get proptype
         var propType = $('#proposalType option:selected').text();
         
@@ -30,32 +32,28 @@ CreateProposalPage.controller = function() {
         var contract = web3.eth.contract(HierarchicalDAO_abi);
         var instance = contract.at(daoaddress);
 
+        var gasAmount = 300000;
+
         var propTypeId = ProposalsPage.propTypes.indexOf(propType);
 
-        /*console.log(propTypeId);
-        console.log(_address1);
-        console.log(_address2);
-        console.log(_bool1);
-        return;*/
-
         if (propTypeId == 1)
-            var tx = instance.proposeChangeAutoApprovalDuration(_address1, _uint1, _uint2, _bool1, {from: account, gasPrice: gasPrice, gas: 300000});
+            var tx = instance.proposeChangeAutoApprovalDuration(_address1, _uint1, _uint2, _bool1, {from: account, gasPrice: gasPrice, gas: gasAmount});
         if (propTypeId == 2)
-            var tx = instance.proposeChangeMinAppovalQuorum(_address1, _uint1, _uint2, {from: account, gasPrice: gasPrice, gas: 300000});
+            var tx = instance.proposeChangeMinAppovalQuorum(_address1, _uint1, _uint2, {from: account, gasPrice: gasPrice, gas: gasAmount});
         if (propTypeId == 3)
-            var tx = instance.proposeChangeMinVetoQuorum(_address1, _uint1, _uint2, {from: account, gasPrice: gasPrice, gas: 300000});
+            var tx = instance.proposeChangeMinVetoQuorum(_address1, _uint1, _uint2, {from: account, gasPrice: gasPrice, gas: gasAmount});
         if (propTypeId == 5)
-            var tx = instance.proposeChangeMemberStatus(_address1, _uint1, _bool1, {from: account, gasPrice: gasPrice, gas: 300000});
+            var tx = instance.proposeChangeMemberStatus(_address1, _uint1, _bool1, {from: account, gasPrice: gasPrice, gas: gasAmount});
         if (propTypeId == 6)
-            var tx = instance.proposeModifyCompulsoryApprover(_address1, _uint1, _uint2, _bool1, {from: account, gasPrice: gasPrice, gas: 300000});
+            var tx = instance.proposeModifyCompulsoryApprover(_address1, _uint1, _uint2, _bool1, {from: account, gasPrice: gasPrice, gas: gasAmount});
         if (propTypeId == 7)
-            var tx = instance.proposeJoinParentDAO(_address1, _address2, {from: account, gasPrice: gasPrice, gas: 300000});
+            var tx = instance.proposeJoinParentDAO(_address1, _address2, {from: account, gasPrice: gasPrice, gas: gasAmount});
         if (propTypeId == 8)
-            var tx = instance.proposeVote(_address1, _uint1, _bool1, {from: account, gasPrice: gasPrice, gas: 300000});
+            var tx = instance.proposeVote(_address1, _uint1, _bool1, {from: account, gasPrice: gasPrice, gas: gasAmount});
         if (propTypeId == 9)
-            var tx = instance.proposeAddMember(_address1, _address2, _bool1, {from: account, gasPrice: gasPrice, gas: 300000});
+            var tx = instance.proposeAddMember(_address1, _address2, _bool1, {from: account, gasPrice: gasPrice, gas: gasAmount});
         if (propTypeId == 10)
-            var tx = instance.proposeTransferEth(_address1, _address2, _uint1, {from: account, gasPrice: gasPrice, gas: 300000});
+            var tx = instance.proposeTransferEth(_address1, _address2, _uint1, {from: account, gasPrice: gasPrice, gas: gasAmount});
         
         txHistory.add(propType, tx);
     }
@@ -66,14 +64,6 @@ CreateProposalPage.view = function(ctrl) {
         m("h3", {style:"margin-top:0px;"}, "Create Proposal"),
         m("form",
             m("div.form-group", {style:"width:400px"},
-                m("label","From account"),
-                m("select.form-control", {id:"account"}, 
-                    ctrl.accounts.map(function(acct) {
-                        return m("option", acct);
-                    })
-                )
-            ),
-            m("div.form-group", {style:"width:400px"},
                 m("label","Proposal Type"),
                 m("select.form-control", {id:"proposalType"},
                     ProposalsPage.propTypes.map(function(propType, idx) {
@@ -82,10 +72,19 @@ CreateProposalPage.view = function(ctrl) {
                     })
                 )
             ),
-            m("div.form-group", {style:"width:400px"},
-                m("label","Target DAO"),
-                m("input", {type:"text", class:"form-control", id:"_address1"})
-            ),
+            function() {
+                //only return target DAO if there are some
+                if (ctrl.parentDAOs.length > 0) {
+                    return m("div.form-group", {style:"width:400px"},
+                        m("label","Target DAO"),
+                        m("select.form-control", {id:"_address1"},
+                            ctrl.parentDAOs.map(function(daoaddress, idx) {
+                                return m("option", {value:daoaddress}, daoaddress);
+                            })
+                        )
+                    )
+                }
+            }(),
             m("div.form-group", {style:"width:400px"},
                 m("label","_address2"),
                 m("input", {type:"text", class:"form-control", id:"_address2"})
