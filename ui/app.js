@@ -33,10 +33,30 @@ app.on('ready', function() {
   });
 
   //mainWindow.toggleDevTools();
-  mainWindow.setMenu(null);
+  var template = [{
+        label: "Application",
+        submenu: [
+            { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
+            { type: "separator" },
+            { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
+        ]}, {
+        label: "Edit",
+        submenu: [
+            { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+            { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+            { type: "separator" },
+            { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+            { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+            { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+            { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+        ]}
+  ];
 
-  //var menu = new Menu();
-  //Menu.setApplicationMenu(menu);
+  //only set the menu for osx (for copy/paste etc)
+  if (process.platform == 'darwin')
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  else
+    Menu.setApplicationMenu(null);
 
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/index.html');
