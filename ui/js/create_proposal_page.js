@@ -4,8 +4,11 @@ CreateProposalPage.route = "/proposals";
 
 CreateProposalPage.controller = function() {
 
+    var self = this;
+
     //get active parent dao addresses
     this.parentDAOs = getParentDAOs();
+    this.targetParentDAO = false;
 
     this.submit = function() {
         if (rpcAvailable == false || daoaddress.length == 0) {
@@ -57,9 +60,42 @@ CreateProposalPage.controller = function() {
         
         txHistory.add(propType, tx);
     }
+
+    this.toggleTargetDAO = function() {
+        if (self.targetParentDAO)
+            self.targetParentDAO = false;
+        else
+            self.targetParentDAO = true;
+    }
 }
 
 CreateProposalPage.view = function(ctrl) {
+
+    var targetDAOcheckbox = null;
+    var targetDAOdropdown = null;
+
+    if (ctrl.parentDAOs.length > 0) {
+
+        targetDAOcheckbox = m("div.checkbox", 
+                m("label",
+                    m("input", {type:"checkbox", onclick:ctrl.toggleTargetDAO}),
+                    "Target this proposal to a parent DAO"
+                )
+            );
+
+        if (ctrl.targetParentDAO) {
+            targetDAOdropdown = m("div.form-group", {style:"width:400px"},
+                        m("label","Target DAO"),
+                        m("select.form-control", {id:"_address1"},
+                            ctrl.parentDAOs.map(function(daoaddress, idx) {
+                                return m("option", {value:daoaddress}, daoaddress);
+                            })
+                        )
+                    );
+        }
+
+    }
+
     return m("div", {style:"margin:10px;"},
         m("h3", {style:"margin-top:0px;"}, "Create Proposal"),
         m("form",
@@ -72,19 +108,8 @@ CreateProposalPage.view = function(ctrl) {
                     })
                 )
             ),
-            function() {
-                //only return target DAO if there are some
-                if (ctrl.parentDAOs.length > 0) {
-                    return m("div.form-group", {style:"width:400px"},
-                        m("label","Target DAO"),
-                        m("select.form-control", {id:"_address1"},
-                            ctrl.parentDAOs.map(function(daoaddress, idx) {
-                                return m("option", {value:daoaddress}, daoaddress);
-                            })
-                        )
-                    )
-                }
-            }(),
+            targetDAOcheckbox,
+            targetDAOdropdown,
             m("div.form-group", {style:"width:400px"},
                 m("label","_address2"),
                 m("input", {type:"text", class:"form-control", id:"_address2"})
