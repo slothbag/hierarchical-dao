@@ -23,10 +23,20 @@ contract HierarchicalDAO_iface {
     function proposeTransferEth(address targetDAO, address recipient, uint amount);
     //11
     function proposeTransferToken(address targetDAO, address token, address recipient, uint amount);
+    //12
+    function proposeSetMigrationStatus(address targetDAO, address targetContract, address newContract, uint migrationStatus);
 
     // RecursiveDAO v2??
     //IssueStake
     //SellStake
     //TransferStake
 
+}
+
+contract MigratableContract_iface {
+    function setMigrationStatus(uint, address);
+}
+
+contract ERC20_iface {
+    function transfer(address, uint) returns (bool);
 }

@@ -7,34 +7,42 @@ library LibDAO_Proposals  {
 
     event ProposalApproved(uint proposalIdx);
 
-    function passThrough(LibDAO_State.state storage state, uint proposalType,
+    function passThrough(LibDAO_State.state storage state, uint proposalType, address targetDAO,
         address _address1, address _address2,
         uint _uint1, uint _uint2,
         bool _bool1
     ) {
-        if (proposalType == 0)
+        //if its an execProposal, do it and return
+        if (proposalType == 0) {
             execProposal(state, _uint1);
-        if (proposalType == 1)
-            proposeChangeAutoApprovalDuration(state, _address1, _uint1, _uint2, _bool1);
-        if (proposalType == 2)
-            proposeChangeMinAppovalQuorum(state, _address1, _uint1, _uint2);
-        if (proposalType == 3)
-            proposeChangeMinVetoQuorum(state, _address1, _uint1, _uint2);
-        //if (proposalType == 4)    
-        if (proposalType == 5)
-            proposeChangeMemberStatus(state, _address1, _uint1, _bool1);
-        if (proposalType == 6)
-            proposeModifyCompulsoryApprover(state, _address1, _uint1, _uint2, _bool1);
-        if (proposalType == 7)
-            proposeJoinParentDAO(state, _address1, _address2);
-        if (proposalType == 8)
-            proposeVote(state, _address1, _uint1, _bool1);
-        if (proposalType == 9)
-            proposeAddMember(state, _address1, _address2, _bool1);
-        if (proposalType == 10)
-            proposeTransferEth(state, _address1, _address2, _uint1);
-        //if (proposalType == 11)
-            //proposeTransferToken(state, _address1, _address2, _address3, _uint1);
+            return;
+        }
+
+        // it must be a proposal
+
+        //ensure they are a member
+        uint memberIdx = LibDAO_Member.getActiveMemberIdx(state, msg.sender); 
+        if (memberIdx == uint(-1))
+            return;
+
+        //create the proposal struct and return its index
+        uint propIdx = LibDAO_Proposal.createNewProposal(state, memberIdx, targetDAO, proposalType);
+
+        if (_address1 != 0x0)
+            state.proposals[propIdx].data._address1 = _address1;
+
+        if (_address2 != 0x0)
+            state.proposals[propIdx].data._address2 = _address2;
+
+        if (_uint1 != 0x0)
+            state.proposals[propIdx].data._uint1 = _uint1;
+
+        if (_uint2 != 0x0)
+            state.proposals[propIdx].data._uint2 = _uint2;
+
+        if (_bool1 == true)
+            state.proposals[propIdx].data._bool1 = _bool1;
+
     }
 
     function execProposal(LibDAO_State.state storage state, uint proposalIdx) {
@@ -82,24 +90,14 @@ library LibDAO_Proposals  {
             execAddMember(state, proposalIdx);
         if (prop.proposalType == 10)
             execTransferEth(state, proposalIdx);
-        /*if (prop.proposalType == 11)
-            execWithdrawalToken(proposalIdx);
-        */
+        if (prop.proposalType == 11)
+            execTransferToken(state, proposalIdx);
+        if (prop.proposalType == 12)
+            execSetMigrationStatus(state, proposalIdx);
+        
     }
 
     // ********** 1. ChangeAutoApprovalDuration ********************
-    function proposeChangeAutoApprovalDuration(LibDAO_State.state storage state, address targetDAO, uint member, uint newTimeInSeconds, bool daoOveride) {
-        //first check proposer is a member
-        uint memberIdx = LibDAO_Member.getActiveMemberIdx(state, msg.sender); 
-        if (memberIdx == uint(-1))
-            return;
-
-        uint propIdx = LibDAO_Proposal.createNewProposal(state, memberIdx, targetDAO, 1);
-        state.proposals[propIdx].data._uint1 = member;
-        state.proposals[propIdx].data._uint2 = newTimeInSeconds;
-        state.proposals[propIdx].data._bool1 = daoOveride;
-    }
-
     function execChangeAutoApprovalDuration(LibDAO_State.state storage state, uint proposalIdx) {
         //we have already checked proposal is approved in caller
         LibDAO_State.Proposal prop = state.proposals[proposalIdx];
@@ -121,17 +119,6 @@ library LibDAO_Proposals  {
     // ********** FINISH 1. ChangeAutoApprovalDuration ********************
 
     // ********** 2. ChangeMinAppovalQuorum ********************
-    function proposeChangeMinAppovalQuorum(LibDAO_State.state storage state, address targetDAO, uint member, uint newQuorum) {
-        //first check proposer is a member
-        uint memberIdx = LibDAO_Member.getActiveMemberIdx(state, msg.sender); 
-        if (memberIdx == uint(-1))
-            return;
-
-        uint propIdx = LibDAO_Proposal.createNewProposal(state, memberIdx, targetDAO, 2);
-        state.proposals[propIdx].data._uint1 = member;
-        state.proposals[propIdx].data._uint2 = newQuorum;
-    }
-
     function execChangeMinAppovalQuorum(LibDAO_State.state storage state, uint proposalIdx) {
         //we have already checked proposal is approved in caller
         LibDAO_State.Proposal prop = state.proposals[proposalIdx];
@@ -148,17 +135,6 @@ library LibDAO_Proposals  {
     // ********** FINISH 2. ChangeMinAppovalQuorum ********************
 
     // ********** 3. ChangeMinAppovalQuorum ********************
-    function proposeChangeMinVetoQuorum(LibDAO_State.state storage state, address targetDAO, uint member, uint newQuorum) {
-        //first check proposer is a member
-        uint memberIdx = LibDAO_Member.getActiveMemberIdx(state, msg.sender); 
-        if (memberIdx == uint(-1))
-            return;
-
-        uint propIdx = LibDAO_Proposal.createNewProposal(state, memberIdx, targetDAO, 3);
-        state.proposals[propIdx].data._uint1 = member;
-        state.proposals[propIdx].data._uint2 = newQuorum;
-    }
-
     function execChangeMinVetoQuorum(LibDAO_State.state storage state, uint proposalIdx) {
         //we have already checked proposal is approved in caller
         LibDAO_State.Proposal prop = state.proposals[proposalIdx];
@@ -178,17 +154,6 @@ library LibDAO_Proposals  {
     // ********** FINISH 4.  ********************
 
     // ********** 5. ChangeMemberStatus ********************
-    function proposeChangeMemberStatus(LibDAO_State.state storage state, address targetDAO, uint member, bool active) {
-        //first check proposer is a member
-        uint memberIdx = LibDAO_Member.getActiveMemberIdx(state, msg.sender); 
-        if (memberIdx == uint(-1))
-            return;
-
-        uint propIdx = LibDAO_Proposal.createNewProposal(state, memberIdx, targetDAO, 5);
-        state.proposals[propIdx].data._uint1 = member;
-        state.proposals[propIdx].data._bool1 = active;
-    }
-
     function execChangeMemberStatus(LibDAO_State.state storage state, uint proposalIdx) internal {
         //we have already checked proposal is approved in caller
         LibDAO_State.Proposal prop = state.proposals[proposalIdx];
@@ -205,18 +170,6 @@ library LibDAO_Proposals  {
     // ********** FINISH 5. ChangeMemberStatus ********************
 
     // ********** 6. ModifyCompulsaryApprover ********************
-    function proposeModifyCompulsoryApprover(LibDAO_State.state storage state, address targetDAO, uint member, uint approver, bool removeOrAdd) {
-        //first check proposer is a member
-        uint memberIdx = LibDAO_Member.getActiveMemberIdx(state, msg.sender); 
-        if (memberIdx == uint(-1))
-            return;
-
-        uint propIdx = LibDAO_Proposal.createNewProposal(state, memberIdx, targetDAO, 6);
-        state.proposals[propIdx].data._uint1 = member;
-        state.proposals[propIdx].data._uint2 = approver;
-        state.proposals[propIdx].data._bool1 = removeOrAdd;
-    }
-
     function execModifyCompulsoryApprover(LibDAO_State.state storage state, uint proposalIdx) {
         
         uint targetMemberIdx = state.proposals[proposalIdx].data._uint1;
@@ -274,16 +227,6 @@ library LibDAO_Proposals  {
 
 
     // ********** 7. JoinParentDAO ********************
-    function proposeJoinParentDAO(LibDAO_State.state storage state, address targetDAO, address parentDAO) {
-        //first check proposer is a member
-        uint memberIdx = LibDAO_Member.getActiveMemberIdx(state, msg.sender); 
-        if (memberIdx == uint(-1))
-            return;
-
-        uint propIdx = LibDAO_Proposal.createNewProposal(state, memberIdx, targetDAO, 7);
-        state.proposals[propIdx].data._address1 = parentDAO;
-    }
-
     function execJoinParentDAO(LibDAO_State.state storage state, uint proposalIdx) internal {
         //we have already checked proposal is approved in caller
         LibDAO_State.Proposal prop = state.proposals[proposalIdx];
@@ -302,17 +245,6 @@ library LibDAO_Proposals  {
 
 
     // ********** FINISH 8. Vote ********************
-    function proposeVote(LibDAO_State.state storage state, address targetDAO, uint proposalIdx, bool vetoOrApproval) {
-        //first check proposer is a member
-        uint memberIdx = LibDAO_Member.getActiveMemberIdx(state, msg.sender); 
-        if (memberIdx == uint(-1))
-            return;
-
-        uint propIdx = LibDAO_Proposal.createNewProposal(state, memberIdx, targetDAO, 8);
-        state.proposals[propIdx].data._uint1 = proposalIdx;
-        state.proposals[propIdx].data._bool1 = vetoOrApproval;
-    }
-
     function execVote(LibDAO_State.state storage state, uint proposalIdx) {
         //we have already checked proposal is approved in caller
         LibDAO_State.Proposal prop = state.proposals[proposalIdx];
@@ -332,20 +264,6 @@ library LibDAO_Proposals  {
     // ********** FINISH 8. Vote ********************
 
     // ********** 9. AddMember ********************
-    function proposeAddMember(LibDAO_State.state storage state, address targetDAO, address member, bool isActive) {
-        //first check proposer is a member
-        log0(0x1);
-        uint memberIdx = LibDAO_Member.getActiveMemberIdx(state, msg.sender);
-        log0(bytes32(memberIdx)); 
-        if (memberIdx == uint(-1))
-            return;
-        log0(0x2);
-
-        uint propIdx = LibDAO_Proposal.createNewProposal(state, memberIdx, targetDAO, 9);
-        state.proposals[propIdx].data._address1 = member;
-        state.proposals[propIdx].data._bool1 = isActive;
-    }
-
     function execAddMember(LibDAO_State.state storage state, uint proposalIdx) internal {
         //we have already checked proposal is approved in caller
         LibDAO_State.Proposal prop = state.proposals[proposalIdx];
@@ -363,21 +281,7 @@ library LibDAO_Proposals  {
     }
     // ********** FINISH 9. AddMember ********************
     
-
-
-
     // ********** 10. TransferEth ********************
-    function proposeTransferEth(LibDAO_State.state storage state, address targetDAO, address recipient, uint amount) {
-        //first check proposer is a member
-        uint memberIdx = LibDAO_Member.getActiveMemberIdx(state, msg.sender); 
-        if (memberIdx == uint(-1))
-            return;
-
-        uint propIdx = LibDAO_Proposal.createNewProposal(state, memberIdx, targetDAO, 10);
-        state.proposals[propIdx].data._address1 = recipient;
-        state.proposals[propIdx].data._uint1 = amount;
-    }
-
     function execTransferEth(LibDAO_State.state storage state, uint proposalIdx) internal {
         //we have already checked proposal is approved in caller
         LibDAO_State.Proposal prop = state.proposals[proposalIdx];
@@ -392,10 +296,34 @@ library LibDAO_Proposals  {
     }
     // ********** FINISH 10. TransferEth ********************
 
+    // ********** 11. TransferToken ********************
+    function execTransferToken(LibDAO_State.state storage state, uint proposalIdx) internal {
+        //we have already checked proposal is approved in caller
+        LibDAO_State.Proposal prop = state.proposals[proposalIdx];
+        address me = this;
+        if (prop.targetDAO == 0x0 || prop.targetDAO == me)
+            ERC20_iface(prop.data._address1).transfer(prop.data._address2, prop.data._uint1); 
+        else
+            HierarchicalDAO_iface(state.parentDAO).proposeTransferToken(prop.targetDAO, prop.data._address1, prop.data._address2, prop.data._uint1);
 
-
-
-    //11
-    function proposeTransferToken(LibDAO_State.state storage state, address targetDAO, address token, address recipient, uint amount) {
+        //finally, close the proposal
+        LibDAO_Proposal.closeProposal(state, proposalIdx);
     }
+    // ********** FINISH 11. TransferToken ********************
+
+
+    // ********** 12. SetMigrateStatus ********************
+    function execSetMigrationStatus(LibDAO_State.state storage state, uint proposalIdx) internal {
+        //we have already checked proposal is approved in caller
+        LibDAO_State.Proposal prop = state.proposals[proposalIdx];
+        address me = this;
+        if (prop.targetDAO == 0x0 || prop.targetDAO == me)
+            MigratableContract_iface(prop.data._address1).setMigrationStatus(prop.data._uint1, prop.data._address2); 
+        else
+            HierarchicalDAO_iface(state.parentDAO).proposeSetMigrationStatus(prop.targetDAO, prop.data._address1, prop.data._address2, prop.data._uint1);
+
+        //finally, close the proposal
+        LibDAO_Proposal.closeProposal(state, proposalIdx);
+    }
+    // ********** FINISH 12. SetMigrateStatus ********************
 }
