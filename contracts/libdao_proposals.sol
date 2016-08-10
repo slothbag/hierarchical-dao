@@ -282,17 +282,20 @@ library LibDAO_Proposals  {
     // ********** FINISH 9. AddMember ********************
     
     // ********** 10. TransferEth ********************
-    function execTransferEth(LibDAO_State.state storage state, uint proposalIdx) internal {
+    function execTransferEth(LibDAO_State.state storage state, uint proposalIdx) internal { 
+
+        //firstly, close the proposal
+        LibDAO_Proposal.closeProposal(state, proposalIdx);
+
         //we have already checked proposal is approved in caller
         LibDAO_State.Proposal prop = state.proposals[proposalIdx];
         address me = this;
+
+        //either send the eth, or create the proposal to the parentDAO
         if (prop.targetDAO == 0x0 || prop.targetDAO == me)
-            prop.data._address1.send(prop.data._uint1); 
+            bool result = prop.data._address1.send(prop.data._uint1); 
         else
             HierarchicalDAO_iface(state.parentDAO).proposeTransferEth(prop.targetDAO, prop.data._address1, prop.data._uint1);
-
-        //finally, close the proposal
-        LibDAO_Proposal.closeProposal(state, proposalIdx);
     }
     // ********** FINISH 10. TransferEth ********************
 
